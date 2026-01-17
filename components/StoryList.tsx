@@ -1,7 +1,6 @@
-
 import React, { useState, useMemo } from 'react';
-import { UserStory, LanguageFilter } from '../types';
-import StoryCard from './StoryCard';
+import { UserStory, LanguageFilter } from '../types.ts';
+import StoryCard from './StoryCard.tsx';
 
 interface StoryListProps {
   stories: UserStory[];

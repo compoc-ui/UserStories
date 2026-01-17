@@ -1,8 +1,7 @@
-
 import React, { useState, useRef } from 'react';
-import { UserStory } from '../types';
-import { parseFileToRows } from '../utils/csvParser';
-import { processAndEnrichStories } from '../services/geminiService';
+import { UserStory } from '../types.ts';
+import { parseFileToRows } from '../utils/csvParser.ts';
+import { processAndEnrichStories } from '../services/geminiService.ts';
 
 interface CSVUploaderProps {
   onUploadComplete: (stories: UserStory[]) => void;

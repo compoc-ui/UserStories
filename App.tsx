@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
-import { UserStory } from './types';
-import CSVUploader from './components/CSVUploader';
-import StoryList from './components/StoryList';
-import ManageStories from './components/ManageStories';
+import { UserStory } from './types.ts';
+import CSVUploader from './components/CSVUploader.tsx';
+import StoryList from './components/StoryList.tsx';
+import ManageStories from './components/ManageStories.tsx';
 
 const App: React.FC = () => {
   const [stories, setStories] = useState<UserStory[]>([]);

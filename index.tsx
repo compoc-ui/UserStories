@@ -1,11 +1,7 @@
-"homepage": "user-stories-roan.vercel.app",
-"scripts": {
-"predeploy": "npm run build",
-"deploy": "gh-pages -d build"
-}
+// Entry point for the React application
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './App.tsx';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

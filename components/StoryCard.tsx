@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { UserStory } from '../types';
+import { UserStory } from '../types.ts';
 
 interface StoryCardProps {
   story: UserStory;
@@ -43,14 +42,15 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
     
     if (isList) {
       return (
-        <ul className={`list-none space-y-3 mt-2 w-full ${isAr ? 'text-right' : 'text-left'}`}>
+        <ul className={`list-none space-y-3 mt-2 w-full`}>
           {str.split('\n').map((line, i) => {
             const cleanLine = line.trim().replace(/^-/, '').trim();
             if (!cleanLine) return null;
             return (
-              <li key={i} className={`flex gap-3 items-start ${isAr ? 'flex-row-reverse' : 'flex-row'}`}>
-                <span className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.3)]`}></span>
-                <span className={`text-slate-600 text-[13px] leading-relaxed flex-grow`}>
+              <li key={i} className="flex gap-3 items-start">
+                {/* Standard flex-row with dir=rtl/ltr handles bullet side automatically */}
+                <span className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.3)]"></span>
+                <span className={`text-slate-600 text-[13px] leading-relaxed flex-grow ${isAr ? 'text-right' : 'text-left'}`}>
                   {cleanLine}
                 </span>
               </li>
@@ -70,7 +70,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
       {/* Header Section */}
       <div className={`p-5 flex items-start justify-between gap-4 ${isExpanded ? 'border-b border-slate-50' : ''}`}>
         <div className="flex-grow">
-          <div className={`flex items-center gap-3 mb-1.5 ${isAr ? 'justify-start' : 'justify-start'}`}>
+          <div className="flex items-center gap-3 mb-1.5">
             <div className="text-[9px] font-black text-slate-300 uppercase tracking-widest select-none">ID: {story.id}</div>
           </div>
           <h4 className={`font-black text-slate-900 leading-tight transition-colors group-hover:text-indigo-600 ${isAr ? 'text-xl text-right' : 'text-lg text-left'}`}>
@@ -90,7 +90,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
         
         {/* User Story Section */}
         <div className="mb-8">
-          <div className={`flex items-center gap-2 mb-3 ${isAr ? 'justify-start' : 'justify-start'}`}>
+          <div className="flex items-center gap-2 mb-3">
             <div className={`w-1 h-3.5 rounded-full ${isAr ? 'bg-emerald-400' : 'bg-indigo-400'}`}></div>
             <h5 className={`text-[10px] font-black uppercase tracking-[0.2em] ${isAr ? 'text-emerald-600' : 'text-indigo-600'}`}>
               {isAr ? 'وصف المتطلبات' : 'User Story'}
@@ -125,12 +125,12 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
 
               return (
                 <div key={key}>
-                  <div className={`flex items-center gap-2 mb-3 ${isAr ? 'justify-start' : 'justify-start'}`}>
+                  <div className="flex items-center gap-2 mb-3">
                     <div className="w-1 h-3.5 rounded-full bg-emerald-400"></div>
-                    <h6 className="text-[10px] font-black text-slate-800 uppercase tracking-[0.15em]">{displayLabel}</h6>
+                    <h6 className={`text-[10px] font-black text-slate-800 uppercase tracking-[0.15em] ${isAr ? 'text-right' : 'text-left'}`}>{displayLabel}</h6>
                   </div>
                   
-                  <div className={`bg-slate-50/40 p-6 rounded-2xl border border-slate-100/50`}>
+                  <div className={`bg-slate-50/40 p-6 rounded-2xl border border-slate-100/50 ${isAr ? 'text-right' : 'text-left'}`}>
                     {formatValue(value)}
                   </div>
                 </div>
