@@ -3,6 +3,7 @@ import { UserStory } from './types.ts';
 import CSVUploader from './components/CSVUploader.tsx';
 import StoryList from './components/StoryList.tsx';
 import ManageStories from './components/ManageStories.tsx';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 const App: React.FC = () => {
   const [stories, setStories] = useState<UserStory[]>([]);
@@ -136,6 +137,7 @@ const App: React.FC = () => {
           </div>
         )}
       </main>
+      <SpeedInsights />
     </div>
   );
 };
