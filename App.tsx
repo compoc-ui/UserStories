@@ -9,15 +9,25 @@ const App: React.FC = () => {
   const [stories, setStories] = useState<UserStory[]>([]);
   const [activeTab, setActiveTab] = useState<'upload' | 'manage' | 'stories'>('upload');
 
+  // Load from persistent storage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('user_stories');
+    const saved = localStorage.getItem('storyflow_persistent_data');
     if (saved) {
-      try { setStories(JSON.parse(saved)); } catch (e) {}
+      try { 
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setStories(parsed);
+          setActiveTab('stories');
+        }
+      } catch (e) {
+        console.error("Failed to parse saved stories", e);
+      }
     }
   }, []);
 
+  // Save to persistent storage on every change
   useEffect(() => {
-    localStorage.setItem('user_stories', JSON.stringify(stories));
+    localStorage.setItem('storyflow_persistent_data', JSON.stringify(stories));
   }, [stories]);
 
   const handleUploadComplete = (newStories: UserStory[]) => {
@@ -30,8 +40,9 @@ const App: React.FC = () => {
   };
 
   const handleDeleteAll = () => {
-    if (confirm("Are you sure you want to delete all user stories?")) {
+    if (confirm("Are you sure you want to delete all user stories? This cannot be undone.")) {
       setStories([]);
+      localStorage.removeItem('storyflow_persistent_data');
     }
   };
 
@@ -77,8 +88,8 @@ const App: React.FC = () => {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
-                Manage
-                {stories.length > 0 && <span className="bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-md text-[9px]">{stories.length}</span>}
+                Inventory
+                {stories.length > 0 && <span className="bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-md text-[9px] ml-1">{stories.length}</span>}
               </button>
               <button
                 onClick={() => setActiveTab('stories')}
@@ -87,7 +98,7 @@ const App: React.FC = () => {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
-                User Stories
+                Viewer
               </button>
             </nav>
           </div>
@@ -99,9 +110,9 @@ const App: React.FC = () => {
           <div className="w-full flex justify-center py-20 px-6">
             <div className="w-full max-w-4xl">
               <div className="text-center mb-12">
-                <h2 className="text-5xl font-black text-slate-900 mb-6 tracking-tighter">Automate Your Backlog</h2>
+                <h2 className="text-5xl font-black text-slate-900 mb-6 tracking-tighter">Bilingual Documentation Engine</h2>
                 <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-                  Import complex Excel requirements. Our AI intelligently splits, translates, and organizes them into professional dual-language documentation.
+                  Upload your Excel requirements. Our AI automatically extracts, translates, and formats them into professional English-Arabic specifications.
                 </p>
               </div>
               <CSVUploader onUploadComplete={handleUploadComplete} />
