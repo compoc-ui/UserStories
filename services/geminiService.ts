@@ -1,10 +1,24 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { UserStory, CSVRow } from "../types";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { UserStory, CSVRow } from "../types.ts";
 
 export async function processAndEnrichStories(rows: CSVRow[]): Promise<UserStory[]> {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.error("Gemini API Key is missing in process.env.API_KEY");
+    // We return original rows if enrichment fails due to missing key
+    return rows.map(row => ({
+      id: Math.random().toString(36).substr(2, 9),
+      titleEn: row.titleEn || row.titleAr || 'Untitled',
+      titleAr: row.titleAr || row.titleEn || 'بدون عنوان',
+      descriptionEn: row.descriptionEn || '',
+      descriptionAr: row.descriptionAr || '',
+      classification: row.classification || 'Uncategorized',
+      priority: 'Medium',
+      additionalData: row.additionalData
+    }));
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   const stories: UserStory[] = [];
   
   for (const row of rows) {

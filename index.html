@@ -29,8 +29,11 @@
 }
 </script>
 <script>
-  // Polyfill for process.env to prevent runtime errors in environments where it's not defined
-  window.process = window.process || { env: { API_KEY: "" } };
+  // Ensure process.env.API_KEY is defined. 
+  // If the hosting environment injects it, we keep it. 
+  // Otherwise, we provide a safe object to prevent crashes.
+  window.process = window.process || { env: {} };
+  window.process.env = window.process.env || {};
 </script>
 </head>
 <body class="bg-slate-50 text-slate-900">

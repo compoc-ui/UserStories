@@ -1,5 +1,4 @@
-
-import { CSVRow } from "../types";
+import { CSVRow } from "../types.ts";
 import * as XLSX from "xlsx";
 
 export async function parseFileToRows(file: File): Promise<CSVRow[]> {
