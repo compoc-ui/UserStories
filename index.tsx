@@ -1,4 +1,8 @@
-
+"homepage": "user-stories-roan.vercel.app",
+"scripts": {
+"predeploy": "npm run build",
+"deploy": "gh-pages -d build"
+}
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
