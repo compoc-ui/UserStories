@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { UserStory } from './types.ts';
 import CSVUploader from './components/CSVUploader.tsx';
@@ -57,46 +58,46 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-white flex flex-col w-full overflow-x-hidden">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50 w-full shadow-sm">
         <div className="w-full px-4 lg:px-8">
-          <div className="flex justify-between h-18 items-center py-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-100">
+          <div className="flex flex-col md:flex-row justify-between items-center py-4 gap-4">
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-indigo-100">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <div className="flex flex-col">
-                <h1 className="text-xl font-black text-slate-900 leading-none">StoryFlow <span className="text-indigo-600">Pro</span></h1>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Requirement Engine</span>
+                <h1 className="text-lg md:text-xl font-black text-slate-900 leading-none">StoryFlow <span className="text-indigo-600">Pro</span></h1>
+                <span className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Requirement Engine</span>
               </div>
             </div>
             
-            <nav className="flex items-center bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200">
+            <nav className="flex items-center bg-slate-100/80 p-1 rounded-2xl border border-slate-200 w-full md:w-auto overflow-x-auto scrollbar-hide">
               <button
                 onClick={() => setActiveTab('upload')}
-                className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-2 ${
+                className={`flex-1 md:flex-none px-4 md:px-5 py-2.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                   activeTab === 'upload' ? 'bg-white text-indigo-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                 Upload
               </button>
               <button
                 onClick={() => setActiveTab('manage')}
-                className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-2 ${
+                className={`flex-1 md:flex-none px-4 md:px-5 py-2.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                   activeTab === 'manage' ? 'bg-white text-indigo-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
                 Inventory
-                {stories.length > 0 && <span className="bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-md text-[9px] ml-1">{stories.length}</span>}
+                {stories.length > 0 && <span className="bg-indigo-100 text-indigo-600 px-1.5 py-0.5 rounded-md text-[8px] ml-1">{stories.length}</span>}
               </button>
               <button
                 onClick={() => setActiveTab('stories')}
-                className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-2 ${
+                className={`flex-1 md:flex-none px-4 md:px-5 py-2.5 rounded-xl text-[10px] md:text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                   activeTab === 'stories' ? 'bg-white text-indigo-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" /></svg>
                 Viewer
               </button>
             </nav>
@@ -106,11 +107,11 @@ const App: React.FC = () => {
 
       <main className="flex-grow w-full">
         {activeTab === 'upload' && (
-          <div className="w-full flex justify-center py-20 px-6">
+          <div className="w-full flex justify-center py-10 md:py-20 px-4 md:px-6">
             <div className="w-full max-w-4xl">
-              <div className="text-center mb-12">
-                <h2 className="text-5xl font-black text-slate-900 mb-6 tracking-tighter">Bilingual Documentation Engine</h2>
-                <p className="text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
+              <div className="text-center mb-8 md:mb-12">
+                <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 md:mb-6 tracking-tighter">Bilingual Documentation Engine</h2>
+                <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
                   Upload your Excel requirements. Our AI automatically extracts, translates, and formats them into professional English-Arabic specifications.
                 </p>
               </div>

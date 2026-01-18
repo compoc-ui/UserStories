@@ -12,7 +12,6 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [langFilter, setLangFilter] = useState<LanguageFilter>('Both');
   const [classFilter, setClassFilter] = useState<string>('All');
-  // State to track expanded stories. Empty by default so all are collapsed.
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const toggleExpand = (id: string) => {
@@ -61,9 +60,10 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
   return (
     <div className="w-full flex flex-col min-h-screen bg-slate-50/20">
       {/* Control Bar */}
-      <div className="sticky top-[72px] z-40 w-full px-6 lg:px-10 py-4 bg-white border-b border-slate-200">
-        <div className="w-full flex flex-col md:flex-row gap-6 items-center justify-between">
-          <div className="flex-grow w-full md:max-w-md relative">
+      <div className="sticky top-0 md:top-[72px] z-40 w-full px-4 lg:px-10 py-4 bg-white border-b border-slate-200">
+        <div className="w-full flex flex-col md:flex-row gap-4 items-center justify-between">
+          {/* Search Box */}
+          <div className="w-full md:max-w-sm lg:max-w-md relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -72,20 +72,25 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
             <input
               type="text"
               placeholder="Search requirements..."
-              className="block w-full pl-10 pr-4 py-2 bg-slate-100/50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none"
+              className="block w-full pl-10 pr-4 py-3 md:py-2.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex bg-slate-100 p-1 rounded-xl">
+          {/* Filters List */}
+          <div className="w-full md:w-auto flex flex-col md:flex-row items-stretch md:items-center gap-4">
+            {/* Language Selection List */}
+            <div className="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto">
               {(['English', 'Arabic', 'Both'] as LanguageFilter[]).map((f) => (
                 <button
                   key={f}
-                  onClick={() => setLangFilter(f)}
-                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
-                    langFilter === f ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setLangFilter(f);
+                  }}
+                  className={`flex-1 md:flex-none px-4 md:px-5 py-2.5 md:py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                    langFilter === f ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   {f}
@@ -93,12 +98,13 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
               ))}
             </div>
 
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CATEGORY</span>
+            {/* Category Filter */}
+            <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-xl px-4 py-1.5 w-full md:w-auto">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">CATEGORY</span>
               <select
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
-                className="bg-white border border-slate-200 text-xs font-bold rounded-xl px-4 py-2 text-slate-700 outline-none cursor-pointer"
+                className="bg-transparent text-xs font-bold text-slate-700 outline-none cursor-pointer flex-grow md:flex-none py-1"
               >
                 {classifications.map(c => (
                   <option key={c} value={c}>{c}</option>
@@ -110,9 +116,9 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
       </div>
 
       {/* Main Grid Container */}
-      <div className="w-full px-6 lg:px-10 py-10 flex-grow">
+      <div className="w-full px-4 md:px-6 lg:px-10 py-6 md:py-10 flex-grow">
         <div className="space-y-6 max-w-[1920px] mx-auto">
-          {filteredStories.map((story, index) => {
+          {filteredStories.map((story) => {
             const isExpanded = expandedIds.has(story.id);
             return (
               <div 
@@ -120,7 +126,7 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
                 className="w-full group cursor-pointer"
                 onClick={() => toggleExpand(story.id)}
               >
-                <div className={`grid gap-6 lg:gap-10 transition-all duration-300 ${langFilter === 'Both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
+                <div className={`grid gap-4 lg:gap-10 transition-all duration-300 ${langFilter === 'Both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
                   {(langFilter === 'English' || langFilter === 'Both') && (
                     <StoryCard story={story} variant="en" isExpanded={isExpanded} />
                   )}
