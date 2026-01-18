@@ -38,11 +38,12 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
   };
 
   const SectionLabel = ({ label }: { label: string }) => (
-    <div className={`flex items-center gap-2 mb-4 mt-6`}>
-      <div className={`w-1 h-4 rounded-full ${barColor}`}></div>
+    <div className={`flex items-center gap-2 mb-3 mt-6 ${isAr ? 'flex-row' : 'flex-row'}`}>
+      {!isAr && <div className={`w-1 h-4 rounded-full ${barColor}`}></div>}
       <span className={`text-[11px] font-black tracking-[0.15em] uppercase text-slate-800`}>
         {label}
       </span>
+      {isAr && <div className={`w-1 h-4 rounded-full ${barColor}`}></div>}
     </div>
   );
 
@@ -103,15 +104,10 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
       <div 
         className={`transition-all duration-500 ease-in-out overflow-hidden px-8 lg:px-10 ${isExpanded ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'}`}
       >
-        {/* User Story Content */}
-        <div className="mb-2">
-          <div className={`flex items-center gap-2 mb-3`}>
-            <div className={`w-1 h-4 rounded-full ${barColor}`}></div>
-            <span className={`text-[10.5px] font-black tracking-[0.15em] ${textColor}`}>
-              {isAr ? 'قصة المستخدم' : 'USER STORY'}
-            </span>
-          </div>
-          <div className="py-1">
+        {/* Unified User Story Boxed Section */}
+        <div className="w-full">
+          <SectionLabel label={isAr ? 'قصة المستخدم' : 'USER STORY'} />
+          <div className={`bg-slate-50/50 border border-slate-100/80 rounded-2xl p-6 mb-2`}>
              <p className="text-slate-500 text-[14px] italic leading-relaxed font-medium">
                {isAr ? story.descriptionAr : story.descriptionEn}
              </p>
@@ -120,19 +116,32 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, variant, isExpanded }) => 
 
         {/* Dynamic Boxed Sections */}
         {story.additionalData && Object.entries(story.additionalData).map(([key, value]) => {
-          const kLower = key.toLowerCase();
+          const kLower = key.toLowerCase().trim();
           const valStr = String(value);
           const valHasAr = hasArabic(valStr);
           const keyHasAr = hasArabic(key);
 
+          // Language filtering
           if (isAr) {
             if (!valHasAr && !keyHasAr) return null;
           } else {
             if (valHasAr || keyHasAr) return null;
           }
 
-          if (kLower.includes('title') || kLower.includes('desc') || kLower.includes('story') || kLower === 'us') {
-             if (!kLower.includes('id') && !kLower.startsWith('title')) return null;
+          // Enhanced Redundancy Check:
+          // Skip anything that's likely already in Title or User Story.
+          // Specifically remove the '#' symbol or 'US' markers highlighted in red in your request.
+          if (kLower === '#' || 
+              kLower === 'us' || 
+              kLower === 'ref' ||
+              kLower === 'no' ||
+              kLower.includes('title') || 
+              kLower.includes('description') || 
+              kLower.includes('story') || 
+              kLower.includes('عنوان') || 
+              kLower.includes('قصة') ||
+              kLower.includes('id')) {
+            return null;
           }
 
           const displayLabel = getDisplayLabel(key.replace(/\((EN|AR)\)$/i, '').trim());
