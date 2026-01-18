@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { UserStory, LanguageFilter } from '../types.ts';
 import StoryCard from './StoryCard.tsx';
@@ -11,7 +12,7 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [langFilter, setLangFilter] = useState<LanguageFilter>('Both');
   const [classFilter, setClassFilter] = useState<string>('All');
-  // Track expanded state by story ID. Initialized as an empty set so all are closed by default.
+  // State to track expanded stories. Empty by default so all are collapsed.
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const toggleExpand = (id: string) => {
@@ -24,7 +25,6 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
     setExpandedIds(newExpanded);
   };
 
-  // Extract classifications directly from the stories (which came from Excel)
   const classifications = useMemo(() => {
     const set = new Set(stories.map(s => s.classification).filter(Boolean));
     return ['All', ...Array.from(set)];
@@ -47,24 +47,23 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
   if (stories.length === 0) {
     return (
       <div className="w-full flex flex-col items-center justify-center py-40 bg-slate-50/30">
-        <div className="w-24 h-24 bg-white shadow-xl rounded-3xl flex items-center justify-center mb-8 border border-slate-100">
-          <svg className="w-12 h-12 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-20 h-20 bg-white shadow-xl rounded-2xl flex items-center justify-center mb-6 border border-slate-100">
+          <svg className="w-10 h-10 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
         </div>
-        <h3 className="text-3xl font-black text-slate-900 tracking-tight">Requirement Workspace Empty</h3>
-        <p className="text-slate-400 mt-2 font-medium">Please upload a source file to start documenting.</p>
+        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Workspace is empty</h3>
+        <p className="text-slate-400 mt-2 font-medium">Upload a requirements file to see them here.</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col min-h-screen bg-slate-50/50">
-      {/* Dynamic Filter Header */}
-      <div className="sticky top-[72px] z-40 w-full px-4 lg:px-8 py-4 bg-white/95 backdrop-blur-xl border-b border-slate-200 shadow-sm">
+    <div className="w-full flex flex-col min-h-screen bg-slate-50/20">
+      {/* Control Bar */}
+      <div className="sticky top-[72px] z-40 w-full px-6 lg:px-10 py-4 bg-white border-b border-slate-200">
         <div className="w-full flex flex-col md:flex-row gap-6 items-center justify-between">
-          {/* Search Box */}
-          <div className="flex-grow w-full md:max-w-xl relative">
+          <div className="flex-grow w-full md:max-w-md relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -73,21 +72,20 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
             <input
               type="text"
               placeholder="Search requirements..."
-              className="block w-full pl-10 pr-4 py-2.5 bg-slate-100/50 border border-slate-200/50 rounded-2xl text-xs font-medium focus:ring-4 focus:ring-indigo-500/10 focus:bg-white transition-all outline-none"
+              className="block w-full pl-10 pr-4 py-2 bg-slate-100/50 border border-slate-200 rounded-xl text-xs font-medium focus:ring-4 focus:ring-indigo-500/10 focus:bg-white outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
 
-          <div className="flex items-center gap-6 bg-white p-1 rounded-2xl border border-slate-100">
-            {/* Language Filter */}
-            <div className="flex items-center gap-1 border-r border-slate-100 pr-2">
+          <div className="flex items-center gap-6">
+            <div className="flex bg-slate-100 p-1 rounded-xl">
               {(['English', 'Arabic', 'Both'] as LanguageFilter[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setLangFilter(f)}
-                  className={`px-3 py-2 text-[10px] font-black uppercase tracking-wider rounded-xl transition-all ${
-                    langFilter === f ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'
+                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${
+                    langFilter === f ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   {f}
@@ -95,75 +93,39 @@ const StoryList: React.FC<StoryListProps> = ({ stories, onReorder }) => {
               ))}
             </div>
 
-            {/* Category Filter - Styled to match screenshot */}
-            <div className="flex items-center gap-3 pr-4">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">CATEGORY FILTER</span>
-              <div className="relative">
-                <select
-                  value={classFilter}
-                  onChange={(e) => setClassFilter(e.target.value)}
-                  className="appearance-none bg-slate-50 border-none text-[13px] font-bold rounded-xl pl-4 pr-10 py-2 text-slate-700 focus:ring-4 focus:ring-indigo-500/10 outline-none cursor-pointer min-w-[120px] shadow-sm transition-all hover:bg-slate-100"
-                >
-                  {classifications.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                </div>
-              </div>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">CATEGORY</span>
+              <select
+                value={classFilter}
+                onChange={(e) => setClassFilter(e.target.value)}
+                className="bg-white border border-slate-200 text-xs font-bold rounded-xl px-4 py-2 text-slate-700 outline-none cursor-pointer"
+              >
+                {classifications.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Workspace Grid */}
-      <div className="w-full px-4 lg:px-8 py-10 relative flex-grow">
-        {langFilter === 'Both' && (
-          <div className="absolute inset-y-0 left-1/2 w-[1px] bg-gradient-to-b from-transparent via-slate-200 to-transparent hidden lg:block"></div>
-        )}
-
-        <div className="space-y-4">
+      {/* Main Grid Container */}
+      <div className="w-full px-6 lg:px-10 py-10 flex-grow">
+        <div className="space-y-6 max-w-[1920px] mx-auto">
           {filteredStories.map((story, index) => {
             const isExpanded = expandedIds.has(story.id);
             return (
-              <div key={story.id} className="group relative w-full">
-                {/* Reorder Buttons */}
-                <div className="absolute -left-10 lg:-left-12 top-4 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
-                  <button 
-                    onClick={() => onReorder(index, index - 1)} 
-                    disabled={index === 0} 
-                    className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white disabled:opacity-20 active:scale-95"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" /></svg>
-                  </button>
-                  <button 
-                    onClick={() => onReorder(index, index + 1)} 
-                    disabled={index === stories.length - 1} 
-                    className="p-1.5 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white disabled:opacity-20 active:scale-95"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
-                  </button>
-                </div>
-
-                {/* Collapsible Wrapper */}
-                <div 
-                  onClick={() => toggleExpand(story.id)}
-                  className={`w-full grid cursor-pointer transition-all duration-300 ${langFilter === 'Both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'} gap-6 lg:gap-16`}
-                >
+              <div 
+                key={story.id} 
+                className="w-full group cursor-pointer"
+                onClick={() => toggleExpand(story.id)}
+              >
+                <div className={`grid gap-6 lg:gap-10 transition-all duration-300 ${langFilter === 'Both' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'}`}>
                   {(langFilter === 'English' || langFilter === 'Both') && (
-                    <StoryCard 
-                      story={story} 
-                      variant="en" 
-                      isExpanded={isExpanded} 
-                    />
+                    <StoryCard story={story} variant="en" isExpanded={isExpanded} />
                   )}
                   {(langFilter === 'Arabic' || langFilter === 'Both') && (
-                    <StoryCard 
-                      story={story} 
-                      variant="ar" 
-                      isExpanded={isExpanded} 
-                    />
+                    <StoryCard story={story} variant="ar" isExpanded={isExpanded} />
                   )}
                 </div>
               </div>
