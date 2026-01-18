@@ -1,3 +1,4 @@
+
 import { CSVRow } from "../types.ts";
 import * as XLSX from "xlsx";
 
@@ -17,7 +18,6 @@ export async function parseFileToRows(file: File): Promise<CSVRow[]> {
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        // Convert to array of arrays to handle the vertical layout manually
         const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" }) as any[][];
         
         if (rawData.length === 0) {
@@ -25,11 +25,9 @@ export async function parseFileToRows(file: File): Promise<CSVRow[]> {
           return;
         }
 
-        // Detect if this is a "Vertical" format (Field in Col A, EN in Col B, AR in Col C)
-        // Check first few rows for keywords in Col A
         const isVertical = rawData.slice(0, 5).some(row => {
           const firstCol = String(row[0] || "").toLowerCase();
-          return ['title', 'user story', 'us', 'classification'].includes(firstCol) || /[\u0600-\u06FF]/.test(firstCol);
+          return ['title', 'user story', 'us', 'description', 'classification'].includes(firstCol) || /[\u0600-\u06FF]/.test(firstCol);
         });
 
         if (isVertical) {
@@ -44,24 +42,21 @@ export async function parseFileToRows(file: File): Promise<CSVRow[]> {
 
             const k = key.toLowerCase();
             
-            // Map core fields
-            if (k === 'title' || k === 'عنوان' || k === 'الموضوع') {
-              row.titleEn = valEn;
-              row.titleAr = valAr;
-            } else if (k === 'user story' || k === 'قصة المستخدم' || k === 'وصف') {
-              row.descriptionEn = valEn;
-              row.descriptionAr = valAr;
-            } else if (k === 'classification' || k === 'التصنيف') {
-              row.classification = valEn || valAr;
-            } else if (k === 'priority' || k === 'الأولوية') {
-              row.priority = valEn || valAr;
+            // Map core fields with broader keywords
+            if (k.includes('title') || k.includes('عنوان') || k.includes('الموضوع') || k.includes('اسم')) {
+              row.titleEn = valEn || row.titleEn;
+              row.titleAr = valAr || row.titleAr;
+            } else if (k.includes('story') || k.includes('description') || k.includes('قصة') || k.includes('وصف') || k.includes('متطلب')) {
+              row.descriptionEn = valEn || row.descriptionEn;
+              row.descriptionAr = valAr || row.descriptionAr;
+            } else if (k.includes('class') || k.includes('تصنيف') || k.includes('نوع')) {
+              row.classification = valEn || valAr || row.classification;
+            } else if (k.includes('priority') || k.includes('أولوية')) {
+              row.priority = valEn || valAr || row.priority;
             } else {
-              // Store as additional data pairs
               if (row.additionalData) {
-                // We use specific keys to identify language later in the UI
                 if (valEn) row.additionalData[`${key} (EN)`] = valEn;
                 if (valAr) row.additionalData[`${key} (AR)`] = valAr;
-                // Also store the raw key if it's a single value
                 if (!valAr && valEn) row.additionalData[key] = valEn;
                 if (!valEn && valAr) row.additionalData[key] = valAr;
               }
@@ -70,7 +65,6 @@ export async function parseFileToRows(file: File): Promise<CSVRow[]> {
           
           resolve([row]);
         } else {
-          // Standard horizontal layout (One story per row)
           const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
           const rows: CSVRow[] = jsonData.map((item: any) => {
             const row: CSVRow = { additionalData: {} };
@@ -78,11 +72,11 @@ export async function parseFileToRows(file: File): Promise<CSVRow[]> {
               const k = key.toLowerCase().trim();
               const val = String(item[key]).trim();
               
-              if (k.includes('title')) {
-                if (k.includes('ar')) row.titleAr = val;
+              if (k.includes('title') || k.includes('عنوان')) {
+                if (k.includes('ar') || /[\u0600-\u06FF]/.test(val)) row.titleAr = val;
                 else row.titleEn = val;
-              } else if (k.includes('desc') || k.includes('story')) {
-                if (k.includes('ar')) row.descriptionAr = val;
+              } else if (k.includes('desc') || k.includes('story') || k.includes('وصف') || k.includes('قصة')) {
+                if (k.includes('ar') || /[\u0600-\u06FF]/.test(val)) row.descriptionAr = val;
                 else row.descriptionEn = val;
               } else if (k.includes('class')) {
                 row.classification = val;
